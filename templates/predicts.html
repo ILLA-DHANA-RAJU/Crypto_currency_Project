@@ -1,0 +1,269 @@
+{% extends 'index.html' %}
+
+{% block style %}
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+
+  .main-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    padding: 40px 20px;
+  }
+
+  .custom-container {
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 0 30px rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .custom-container::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: -3px; right: -3px; bottom: -3px;
+    background: linear-gradient(45deg, #22c55e, #38bdf8, #a855f7, #f43f5e);
+    z-index: -1;
+    background-size: 400% 400%;
+    animation: glow 10s ease infinite;
+    filter: blur(10px);
+    border-radius: 18px;
+  }
+
+  @keyframes glow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #22c55e;
+    font-size: 2.4rem;
+    letter-spacing: 1px;
+  }
+
+  label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  select, input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #334155;
+    color: #fff;
+    font-size: 1rem;
+  }
+
+  button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background: #22c55e;
+    color: #0f172a;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-size: 1rem;
+    box-shadow: 0 6px 16px rgba(34,197,94,0.4);
+  }
+
+  button:hover {
+    background: #16a34a;
+    transform: scale(1.03);
+  }
+
+  .prediction-result {
+    margin-top: 40px;
+  }
+
+  .prediction-card {
+    background: #334155;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 25px;
+    margin-top: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease, background-color 0.3s ease, border 0.3s ease;
+    border: 2px solid transparent;
+  }
+
+  .prediction-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    background-color: #475569;
+    border: 2px solid #38bdf8;
+  }
+
+  .forecast-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+  }
+
+  canvas {
+    margin-top: 40px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+
+  .highlight {
+    font-size: 1.1rem;
+    color: #facc15;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-wrapper">
+  <div class="custom-container">
+    <h1>🌟 Crypto Price Predictor</h1>
+
+    <form onsubmit="event.preventDefault(); getPrediction();">
+      <label for="cryptoSelect">Select Cryptocurrency:</label>
+      <select id="cryptoSelect" required>
+        <option value="BTCUSDT">Bitcoin (BTC)</option>
+        <option value="ETHUSDT">Ethereum (ETH)</option>
+        <option value="LTCUSDT">Litecoin (LTC)</option>
+      </select>
+
+      <label for="currencySelect">Select Your Currency:</label>
+      <select id="currencySelect" required>
+        <option value="USD" selected>USD ($)</option>
+        <option value="INR">INR (₹)</option>
+        <option value="EUR">EUR (€)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="JPY">JPY (¥)</option>
+      </select>
+
+      <label for="amountInput">Enter Investment Amount (in selected currency):</label>
+      <input type="number" id="amountInput" min="1" placeholder="e.g. 1000" required />
+
+      <button type="submit">🔮 Predict Next 7 Days</button>
+    </form>
+
+    <div id="output" class="prediction-result"></div>
+    <canvas id="cryptoChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const currencySymbols = {
+    USD: "$", INR: "₹", EUR: "€", GBP: "£", JPY: "¥"
+  };
+
+  let chartInstance = null;
+
+  async function getExchangeRate(toCurrency) {
+    if (toCurrency === 'USD') return 1;
+    try {
+      const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
+      const data = await res.json();
+      return data.rates[toCurrency] || 1;
+    } catch {
+      return 1;
+    }
+  }
+
+  async function getPrediction() {
+    const crypto = document.getElementById('cryptoSelect').value;
+    const selectedCurrency = document.getElementById('currencySelect').value;
+    const userAmount = parseFloat(document.getElementById('amountInput').value);
+    const exchangeRate = await getExchangeRate(selectedCurrency);
+    const symbol = currencySymbols[selectedCurrency] || "$";
+    const response = await fetch(`/predict?crypto=${crypto}`);
+    const data = await response.json();
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerHTML = '';
+
+    if (data.predictions && data.current_price) {
+      const currentPriceUSD = parseFloat(data.current_price);
+      const currentPriceLocal = currentPriceUSD * exchangeRate;
+      const quantity = (userAmount / currentPriceLocal).toFixed(6);
+
+      outputDiv.innerHTML = `
+        <div class="prediction-card">
+          <p><strong>💰 Current Price of ${crypto}:</strong> <span class="highlight">${symbol}${currentPriceLocal.toFixed(2)}</span> (${currentPriceUSD.toFixed(2)} USD)</p>
+          <p><strong>🪙 You can buy:</strong> <span class="highlight">${quantity}</span> coins</p>
+        </div>
+        <h3 style="margin-top:30px;">📊 7-Day Forecast:</h3>
+        <div class="forecast-wrap">
+      `;
+
+      data.predictions.forEach((priceUSD, i) => {
+        const priceLocal = priceUSD * exchangeRate;
+        const futureValue = (priceLocal * quantity).toFixed(2);
+        outputDiv.innerHTML += `
+          <div class="prediction-card">
+            <strong>Day ${i + 1}</strong><br>
+            🔹 Coin Price: ${symbol}${priceLocal.toFixed(2)}<br>
+            💸 Investment Value: ${symbol}${futureValue}
+          </div>`;
+      });
+
+      outputDiv.innerHTML += `</div>`;
+      renderChart(data.predictions.map(p => p * exchangeRate), symbol);
+    } else {
+      outputDiv.innerHTML = "<p style='color: red;'>Prediction failed. Please try again.</p>";
+    }
+  }
+
+  function renderChart(predictedPrices, symbol) {
+    const ctx = document.getElementById('cryptoChart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: predictedPrices.map((_, i) => `Day ${i + 1}`),
+        datasets: [{
+          label: 'Predicted Price',
+          data: predictedPrices,
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34,197,94,0.1)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 5,
+          pointBackgroundColor: '#facc15'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#000' } }
+        },
+        scales: {
+          x: { ticks: { color: '#000' } },
+          y: {
+            ticks: {
+              callback: value => `${symbol}${value.toFixed(2)}`,
+              color: '#000'
+            }
+          }
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends 'index.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<style>
+/* ... (your gorgeous CSS remains unchanged) ... */
+.dashboard-container {
+  color:rgb(0, 0, 0);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 18px;
+  padding: 50px 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboard-title {
+  font-size: 3rem;
+  color:rgb(15, 14, 14);
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.dashboard-subtitle {
+  font-size: 1.3rem;
+  color: #cbd5e1;
+  margin-bottom: 40px;
+  text-align: center;
+  font-style: italic;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.stat-card {
+  background: rgba(8, 6, 6, 0.72);
+  padding: 25px 30px;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease-in-out;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, #38bdf8, #22c55e, #f59e0b, #ef4444);
+  background-size: 400% 400%;
+  animation: rotateGradient 8s linear infinite;
+  opacity: 0.2;
+  z-index: 0;
+}
+
+@keyframes rotateGradient {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.stat-card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #38bdf8;
+}
+
+.stat-card h3 {
+  font-size: 1.4rem;
+  color: #f8fafc;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.stat-card p {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.stat-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 600px) {
+  .dashboard-title {
+    font-size: 2.3rem;
+  }
+
+  .dashboard-subtitle {
+    font-size: 1rem;
+  }
+}
+</style>
+
+<div class="dashboard-container">
+  <h1 class="dashboard-title">👋 Welcome, {{ user }}!</h1>
+  <p class="dashboard-subtitle">📊 Here's your crypto dashboard insights at a glance!</p>
+
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-card-content">
+        <div class="stat-icon">💰</div>
+        <h3>Current Coins</h3>
+        <p id="coins-list">{{ coins|join(', ') }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-content">
+        <div class="stat-icon">📉</div>
+        <a href="{{ url_for('chart') }}"><h3>Charts Coins</h3></a>
+        <p id="charts-list">{{ charts_seen|join(', ') }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-content">
+        <div class="stat-icon">🔮</div>
+        <a href="{{ url_for('predicts') }}"><h3>Most Predictions</h3></a>
+        <p id="last-prediction">{{ last_prediction }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function fetchDashboardData() {
+    fetch('/dashboard/data')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('coins-list').innerText = data.coins.join(', ');
+        document.getElementById('charts-list').innerText = data.charts_seen.join(', ');
+        document.getElementById('last-prediction').innerText = data.last_prediction;
+      })
+      .catch(error => console.error('Error fetching dashboard data:', error));
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchDashboardData);
+  setInterval(fetchDashboardData, 10000);  // every 10 seconds
+</script>
+
+{% endblock %}

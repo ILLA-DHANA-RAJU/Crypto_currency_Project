@@ -1,0 +1,93 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <div class="panel">
+    <h1>🌟 Select Coin</h1>
+    <form id="coinForm" onsubmit="event.preventDefault(); updateChart();">
+      <label for="cryptoSelect">Choose Cryptocurrency:</label>
+      <select id="cryptoSelect" required>
+        <option value="BTCUSDT">Bitcoin (BTC)</option>
+        <option value="ETHUSDT">Ethereum (ETH)</option>
+        <option value="LTCUSDT">Litecoin (LTC)</option>
+      </select>
+      <button type="submit">🔮 Get Live Chart</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h1>📊 Live Chart</h1>
+    <canvas id="cryptoChart" width="400" height="200"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
+
+  <script>
+    let cryptoChart;  // Global variable for the chart instance
+
+    // Function to fetch live data and update the chart
+    function fetchLiveData(cryptoSymbol) {
+      fetch(`/live_chart?crypto=${cryptoSymbol}`)
+        .then(response => response.json())
+        .then(data => {
+          const prices = data.prices;
+          const timestamps = data.timestamps;
+          renderChart(prices, timestamps, cryptoSymbol);
+        })
+        .catch(error => console.error('Error fetching live data:', error));
+    }
+
+    // Function to render the chart
+    function renderChart(prices, timestamps, symbol) {
+      const ctx = document.getElementById('cryptoChart').getContext('2d');
+
+      // Destroy existing chart if it exists
+      if (cryptoChart) {
+        cryptoChart.destroy();
+      }
+
+      // Create a new chart instance
+      cryptoChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: timestamps,  // X-axis labels (timestamps)
+          datasets: [{
+            label: `Price of ${symbol}`,
+            data: prices,  // Y-axis data (prices)
+            borderColor: '#22c55e',
+            backgroundColor: 'rgba(34,197,94,0.2)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointRadius: 4,
+            pointBackgroundColor: '#22c55e'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: false  // Y-axis does not start at 0
+            }
+          }
+        }
+      });
+    }
+
+    // Function to handle form submission and update chart with the selected cryptocurrency
+    function updateChart() {
+      const selectedCrypto = document.getElementById('cryptoSelect').value;
+      fetchLiveData(selectedCrypto);  // Fetch data based on selected cryptocurrency
+    }
+
+    // Fetch data every 10 seconds for real-time updates
+    setInterval(() => {
+      const selectedCrypto = document.getElementById('cryptoSelect').value;
+      fetchLiveData(selectedCrypto);  // Fetch data periodically
+    }, 10000);
+
+    // Initial fetch of data for the default cryptocurrency (BTCUSDT)
+    document.addEventListener("DOMContentLoaded", function() {
+      fetchLiveData('BTCUSDT');  // Fetch initial data on page load
+    });
+  </script>
+{% endblock %}
