@@ -53,7 +53,7 @@ pip install -r requirements.txt
 
 
 ## 👨‍💻 Author 
-Dhana Raju Illa  ^|  [LinkedIn](http://www.linkedin.com/in/dhana-raju-illa-8906842a8)
+Dhana Raju Illa  |  [LinkedIn](http://www.linkedin.com/in/dhana-raju-illa-8906842a8)
 
 
 ## 🌟 Show your support
