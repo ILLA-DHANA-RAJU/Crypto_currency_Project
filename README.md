@@ -33,15 +33,15 @@ cd Crypto_currency_Project
 
 3. Create and activate a virtual environment:
 ^```bash >> README.md
-python -m venv .venv 
-.venv\Scripts\activate   ^# (for Windows) 
-source .venv/bin/activate ^# (for Mac/Linux) 
+- python -m venv .venv 
+- .venv\Scripts\activate   ^# (for Windows) 
+- source .venv/bin/activate ^# (for Mac/Linux) 
 ^```
 
 
 4. Install dependencies:
  ^```bash 
-pip install -r requirements.txt
+- pip install -r requirements.txt
 ^``` 
 
 
