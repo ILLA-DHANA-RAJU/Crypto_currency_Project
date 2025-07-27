@@ -1,0 +1,17 @@
+# Ignore virtual environment
+.venv/
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Ignore environment files
+.env
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore SQLite or cache files
+*.sqlite3
+*.log
