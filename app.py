@@ -1,6 +1,7 @@
 import os
 import requests
 import secrets
+import joblib
 from flask import Flask, render_template, jsonify, request, session, redirect, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,6 +11,8 @@ from datetime import datetime, timezone
 
 
 app = Flask(__name__)
+
+model = joblib.load('app/model.pkl')
 
 # Secure your app with a random secret key
 app.config['SECRET_KEY'] = secrets.token_hex(16)
