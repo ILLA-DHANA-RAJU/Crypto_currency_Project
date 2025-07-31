@@ -5,3 +5,7 @@
 
 [functions]
   directory = "functions"
+
+[build.environment]
+  PYTHON_VERSION = "3.10"
+
