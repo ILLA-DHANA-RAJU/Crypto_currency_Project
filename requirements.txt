@@ -64,7 +64,7 @@ scikit-learn==1.6.1
 scipy==1.15.2
 six==1.17.0
 SQLAlchemy==2.0.40
-tensorboard==2.19.0
+tensorboard==2.20.0
 tensorboard-data-server==0.7.2
 tensorflow==2.20.0rc0
 tensorflow-estimator==2.13.0
