@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential #type-ignore
 from tensorflow.keras.layers import LSTM, Dense, Dropout #type-ignore
+import tensorflow as tf
 import warnings
 warnings.filterwarnings("ignore")
 
