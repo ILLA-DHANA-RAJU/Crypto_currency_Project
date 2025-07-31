@@ -1,0 +1,7 @@
+# netlify.toml
+[build]
+  command = "pip install -r requirements.txt"
+  publish = "."
+
+[functions]
+  directory = "functions"
