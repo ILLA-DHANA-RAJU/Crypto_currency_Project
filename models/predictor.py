@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential #type-ignore
-from tensorflow.keras.layers import LSTM, Dense, Dropout #type-ignore
+from tensorflow.keras.models import Sequential # pyright: ignore[reportMissingImports]
+from tensorflow.keras.layers import LSTM, Dense, Dropout # pyright: ignore[reportMissingImports]
 import tensorflow as tf
 import warnings
 warnings.filterwarnings("ignore")

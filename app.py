@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models.predictor import predict_crypto_price
 from flask_migrate import Migrate
 from datetime import datetime, timezone
-
+# ----------------- Flask App Setup -----------------#
 
 app = Flask(__name__)
 
