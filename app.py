@@ -157,7 +157,7 @@ def signup():
         hashed_password = generate_password_hash(password)
         
         # Create a new user instance and add to the session
-        new_user = User(username=username, mobile=mobile, email=email, password=hashed_password)
+        new_user = User(username=username, mobile=mobile, email=email, password=hashed_password) #type: ignore
         db.session.add(new_user)
         db.session.commit()
 
@@ -174,7 +174,7 @@ def login():
 
         user = User.query.filter_by(email=email).first()
 
-        if user and check_password_hash(user.password, password):
+        if user and check_password_hash(user.password, password): #type: ignore
             session['user'] = user.username  # Store username instead of email
             flash("Login successful!", "success")
             return redirect(url_for('dashboard'))

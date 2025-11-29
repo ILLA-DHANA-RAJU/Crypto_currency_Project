@@ -1,5 +1,6 @@
 # Ignore virtual environment
 .venv/
+*.migrations
 
 # Ignore Python compiled files
 __pycache__/

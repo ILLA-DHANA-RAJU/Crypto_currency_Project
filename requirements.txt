@@ -22,9 +22,12 @@ tensorboard==2.17.0
 tensorboard-data-server==0.7.2
 keras==3.9.2
 h5py==3.13.0
-protobuf==5.29.4
+
+# ❗ FIXED: protobuf version conflict
+protobuf==4.25.3
+
 flatbuffers==25.2.10
-ml_dtypes==0.5.1
+ml_dtypes==0.4.0
 gast==0.6.0
 opt_einsum==3.4.0
 optree==0.15.0
@@ -36,10 +39,10 @@ libclang==18.1.1
 namex==0.0.8
 
 # --- Data Science ---
-numpy==2.1.3
+numpy==1.26.4     # Compatible with Python 3.10 + TF
 pandas==2.2.3
 scikit-learn==1.5.1
-scipy==1.15.2
+scipy==1.11.4      # Python 3.10-compatible
 joblib==1.4.2
 threadpoolctl==3.6.0
 
