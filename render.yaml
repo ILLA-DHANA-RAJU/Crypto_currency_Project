@@ -1,13 +1,10 @@
 services:
   - type: web
-    name: crypto-flask-app
+    name: crypto-flask
     runtime: python
-    repo: .
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
-
+    plan: free
+    region: oregon
+    buildCommand: 'pip install -r requirements.txt'
+    startCommand: 'gunicorn app:app'
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.10.11
-      - key: FLASK_ENV
-        value: production
+      PYTHON_VERSION: 3.10.11
