@@ -16,3 +16,8 @@ __pycache__/
 # Ignore SQLite or cache files
 *.sqlite3
 *.log
+
+pyproject.toml
+poetry.lock
+Pipfile
+Pipfile.lock
