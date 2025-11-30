@@ -2,10 +2,23 @@ services:
   - type: web
     name: crypto-flask
     runtime: python
-    plan: free
     region: oregon
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    plan: free
+
+    buildCommand: 'pip install -r requirements.txt'
+    startCommand: 'gunicorn app:app'
+
     envVars:
       - key: PYTHON_VERSION
-        value: 3.10.11
+        value: '3.10.11'
+
+      - key: FLASK_ENV
+        value: 'production'
+
+      - key: DEBUG
+        value: 'False'
+
+      - key: DATABASE_URL
+        value: 'sqlite:///users.db'
+
+    healthCheckPath: '/'
