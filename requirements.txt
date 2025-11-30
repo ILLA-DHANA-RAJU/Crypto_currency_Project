@@ -59,3 +59,5 @@ charset-normalizer==3.4.1
 click==8.1.8
 colorama==0.4.6
 rich==14.0.0
+gunicorn==21.2.0
+
